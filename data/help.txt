@@ -1,0 +1,3 @@
+Dataset can't be found in main website of IAM "https://fki.tic.heia-fr.ch/databases/iam-handwriting-database" since they don't send verification texts for emails anymore   
+
+; But can be found here : "https://fki.tic.heia-fr.ch/databases/iam-handwriting-database" 
