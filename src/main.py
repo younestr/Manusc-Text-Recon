@@ -14,7 +14,7 @@ from preprocessor import Preprocessor
 class FilePaths:
     """Filenames and paths to data."""
     fn_char_list = '../model/charList.txt'
-    fn_summary = '../model/summary.json'
+    fn_summary = r'C:\Users\hp\Downloads\Manusc Text Recon\pretrained_model\summary.json' #../model/summary.json
     fn_corpus = '../data/corpus.txt'
 
 
