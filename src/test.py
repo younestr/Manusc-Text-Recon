@@ -1,108 +1,76 @@
 import os
-import cv2
 import numpy as np
 import tensorflow as tf
-from model import Model
-from preprocessor import Preprocessor
+from tensorflow.keras.models import load_model
+from tensorflow.keras.layers import Layer
+from tensorflow.keras.preprocessing.image import load_img, img_to_array
+from tensorflow.keras.backend import ctc_decode
 
+# Path configurations
+model_path = r"C:\Users\hp\Downloads\Manusc Text Recon\new_model\C_LSTM_best_c1.hdf5"
+charlist_path = r"C:\Users\hp\Downloads\Manusc Text Recon\pretrained_model\charList.txt"
+test_images_path = r"C:\Users\hp\Downloads\Manusc Text Recon\test_images"
 
-def load_images_from_folder(folder_path, img_size):
-    """
-    Load and preprocess images from a folder.
-    """
-    preprocessor = Preprocessor(img_size, data_augmentation=False)
-    images = []
-    file_paths = []
-    for file_name in os.listdir(folder_path):
-        file_path = os.path.join(folder_path, file_name)
-        if file_name.lower().endswith(('png', 'jpg', 'jpeg', 'bmp')):
-            img = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
-            processed_img = preprocessor.process_img(img)
-            images.append(processed_img)
-            file_paths.append(file_path)
-    return np.array(images), file_paths
+# Custom CTCLayer definition
+class CTCLayer(Layer):
+    def __init__(self, name=None, **kwargs):
+        super().__init__(name=name, **kwargs)
 
+    def call(self, labels, predictions):
+        label_length = tf.math.reduce_sum(tf.cast(labels != -1, tf.int32), axis=-1)
+        pred_length = tf.fill([tf.shape(predictions)[0]], tf.shape(predictions)[1])
+        loss = tf.nn.ctc_loss(
+            labels=labels,
+            logits=predictions,
+            label_length=label_length,
+            logit_length=pred_length,
+            blank_index=-1
+        )
+        return tf.reduce_mean(loss)
 
-def predict(model, sess, images, char_list):
-    """
-    Run predictions on preprocessed images using the model.
-    """
-    predictions = []
-    for img in images:
-        img = img[np.newaxis, ..., np.newaxis]  # Add batch and channel dimensions
-        feed_dict = {model.input_images: img, model.is_training: False}
-        logits = sess.run(model.output, feed_dict=feed_dict)
-        
-        # CTC decoding
-        decoded, _ = tf.nn.ctc_greedy_decoder(logits, [img.shape[2]])
-        decoded_indices = sess.run(decoded[0].indices)[:, 1]  # Extract the character indices
-        pred_text = ''.join([char_list[idx] for idx in decoded_indices])
-        predictions.append(pred_text)
+# Load character list
+with open(charlist_path, "r", encoding="utf-8") as f:
+    char_list = f.read()
 
-    return predictions
+# Load the trained model
+try:
+    model = load_model(model_path, custom_objects={"CTCLayer": CTCLayer}, compile=False)
+    print("Model loaded successfully!")
+except Exception as e:
+    print(f"Error loading model: {e}")
+    exit()
 
+# Preprocessing function
+def preprocess_image(image_path):
+    """Resize and normalize the image."""
+    img = load_img(image_path, target_size=(32, 128), color_mode="grayscale")
+    img_array = img_to_array(img) / 255.0  # Normalize pixel values
+    img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
+    return img_array
 
-def remap_variables(var_list):
-    """
-    Remap the checkpoint variables to match the expected names.
-    """
-    restored_variables = {}
-    for var in var_list:
-        # Remap batch normalization variable names
-        if 'batch_normalization_1_1/beta' in var.name:
-            restored_variables['batch_normalization_1/beta'] = var
-        elif 'batch_normalization_1_1/gamma' in var.name:
-            restored_variables['batch_normalization_1/gamma'] = var
-        elif 'batch_normalization_1_1/moving_mean' in var.name:
-            restored_variables['batch_normalization_1/moving_mean'] = var
-        elif 'batch_normalization_1_1/moving_variance' in var.name:
-            restored_variables['batch_normalization_1/moving_variance'] = var
-        else:
-            restored_variables[var.name] = var
+# Decoding predictions
+def decode_predictions(predictions):
+    """Convert model predictions to readable text."""
+    input_len = np.ones(predictions.shape[0]) * predictions.shape[1]
+    results, _ = ctc_decode(predictions, input_length=input_len, greedy=True)
+    output_texts = []
+    for res in results:
+        decoded = "".join([char_list[int(idx)] for idx in res.numpy()[0] if idx != -1])
+        output_texts.append(decoded)
+    return output_texts
 
-    return restored_variables
+# Process test images
+test_images = [os.path.join(test_images_path, f) for f in os.listdir(test_images_path) if f.endswith(('.png', '.jpg', '.jpeg'))]
 
+if not test_images:
+    print("No test images found in the specified directory.")
+    exit()
 
-def main():
-    # Paths
-    model_dir = r'C:\Users\hp\Downloads\Manusc Text Recon\pretrained_model'
-    test_images_dir = r'C:\Users\hp\Downloads\Manusc Text Recon\test_images'
-    char_list_path = os.path.join(model_dir, "charList.txt")
-    snapshot_path = os.path.join(model_dir, "snapshot-33")
-
-    # Model and preprocessor parameters
-    img_size = (128, 32)
-
-    # Load character list
-    with open(char_list_path, 'r') as f:
-        char_list = f.read().strip()
-
-    # Load images
-    print("Loading and preprocessing images...")
-    images, file_paths = load_images_from_folder(test_images_dir, img_size)
-
-    # Load model
-    print("Loading model...")
-    model = Model(char_list=char_list)
-    tf.compat.v1.disable_eager_execution()  # Disable eager execution for compatibility
-    sess = tf.compat.v1.Session()
-
-    # Remap variables during restore
-    restored_variables = remap_variables(tf.compat.v1.global_variables())
-    saver = tf.compat.v1.train.Saver(restored_variables)
-    saver.restore(sess, snapshot_path)
-
-    # Run predictions
-    print("Running predictions...")
-    predictions = predict(model, sess, images, char_list)
-
-    # Print results
-    for file_path, prediction in zip(file_paths, predictions):
-        print(f"Image: {file_path}, Predicted Text: {prediction}")
-
-    # Close session
-    sess.close()
-
-
-if __name__ == "__main__":
-    main()
+for img_path in test_images:
+    try:
+        img = preprocess_image(img_path)
+        preds = model.predict(img)
+        decoded_text = decode_predictions(preds)
+        print(f"Image: {os.path.basename(img_path)} | Predicted Text: {decoded_text[0]}")
+    except Exception as e:
+        print(f"Error processing image {img_path}: {e}")

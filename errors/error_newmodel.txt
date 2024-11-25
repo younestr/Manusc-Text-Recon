@@ -1,0 +1,2 @@
+ValueError: Cannot assign value to variable ' output_dense/kernel:0': Shape mismatch.
+The variable shape (128, 78), and the assigned value shape (128, 77) are incompatible.
