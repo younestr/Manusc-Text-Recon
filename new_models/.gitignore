@@ -1,0 +1,2 @@
+# ignore all the models in this directory since they're heavy( 100Mb + )
+new_models/*
