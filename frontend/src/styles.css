@@ -1,7 +1,7 @@
 /* Global Styles */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f5f6f8;
+    font-family: 'Poppins', sans-serif; /* Modern font */
+    background-color: #f0f9f4; /* Lively, vibrant background */
     margin: 0;
     padding: 0;
     display: flex;
@@ -20,7 +20,7 @@ body {
     box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
     border-radius: 12px;
     text-align: center;
-    border-top: 5px solid #5a8f7d; /* A nice top accent line */
+    border-top: 5px solid #4e8c46; /* Green accent */
     transition: transform 0.3s ease;
   }
   
@@ -29,14 +29,17 @@ body {
     transform: translateY(-5px);
   }
   
-  /* Heading */
+  /* Heading (App Title) */
   h1 {
-    font-size: 28px;
-    color: #333;
+    font-size: 30px;
+    color: #4e8c46; /* Matching the accent color */
     margin-bottom: 20px;
     font-weight: 700;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
-    color: #4e7a63;
+    color: #3e6a39;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: 'Poppins', sans-serif; /* Modern font for the title */
   }
   
   /* File Input Styling */
@@ -54,13 +57,13 @@ body {
   
   /* Hover effect on input */
   input[type="file"]:hover {
-    border-color: #5a8f7d;
-    background-color: #e7f2e7;
+    border-color: #4e8c46;
+    background-color: #eaf7e5;
   }
   
   /* Submit Button Styling */
   button {
-    background-color: #5a8f7d;
+    background-color: #4e8c46;
     color: white;
     padding: 12px 25px;
     border: none;
@@ -73,7 +76,7 @@ body {
   
   /* Hover effect on the button */
   button:hover {
-    background-color: #4e7a63;
+    background-color: #3e6a39;
     transform: translateY(-2px);
   }
   
@@ -84,14 +87,14 @@ body {
     background-color: #eaf2f1;
     border-radius: 10px;
     box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.1);
-    border-left: 5px solid #5a8f7d; /* Accent border for the transcription */
+    border-left: 5px solid #4e8c46;
     text-align: left;
   }
   
   /* Transcription Heading */
   h2 {
     font-size: 24px;
-    color: #4e7a63;
+    color: #4e8c46;
     font-weight: 700;
     margin-bottom: 15px;
     letter-spacing: 1px;
@@ -117,6 +120,22 @@ body {
   @keyframes fadeIn {
     100% {
       opacity: 1;
+    }
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .App {
+      padding: 20px;
+      width: 90%;
+    }
+  
+    h1 {
+      font-size: 26px;
+    }
+  
+    button {
+      width: 100%;
     }
   }
   
