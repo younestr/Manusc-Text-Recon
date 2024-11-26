@@ -1,6 +1,6 @@
 # Handwritten Text Recognition with TensorFlow
 
-Handwritten Text Recognition (HTR) system implemented with TensorFlow (TF) and trained on the IAM off-line HTR dataset. The model takes **images of single words or text lines (multiple words) as input** and **outputs the recognized text**. 3/4 of the words from the validation-set are correctly recognized, and the character error rate is around 10%.
+Handwritten Text Recognition (HTR) system implemented with TensorFlow (TF) and trained on the IAM off-line HTR dataset. The model takes **images of single words or text lines (multiple words) as input** and **outputs the recognized text**. 3/4 of the words from the validation set are correctly recognized, and the character error rate is around 10%.
 
 ![htr](./doc/htr.png)
 
@@ -18,22 +18,51 @@ This project has evolved through three approaches:
 - **Performance**: Better text line recognition; increased robustness with slightly lower character error rates.
 - **Focus**: More generalized performance for both single words and text lines.
 
-### Third Approach (In Progress)
-- **Focus**: Current work emphasizes addressing limitations in long-text recognition and integrating a multilingual corpus for broader applicability.
-- **Expected Outcome**: Improved generalization, reduced error rates, and support for diverse datasets.
+### Third Approach: Flask API with Pre-trained Models in Kaggle
+This approach integrates the powerful **Flask framework** with **Kaggle's pre-trained models** to provide an API for handwritten text recognition. The architecture uses `ngrok` to expose the API endpoint publicly, processes requests in Kaggle, and serves the results via a local React.js frontend.
 
-## Run Demo
+#### Architecture Overview
+1. **Backend API with Flask**:
+   - The Flask server runs in a Kaggle environment and handles incoming requests.
+   - `ngrok` is used to tunnel the Flask server's local address to a public URL, enabling external access.
 
-1. Download one of the pretrained models:
-   - [Model trained on word images](https://www.dropbox.com/s/mya8hw6jyzqm0a3/word-model.zip?dl=1): Handles single words with better accuracy on the IAM dataset.
-   - [Model trained on text line images](https://www.dropbox.com/s/7xwkcilho10rthn/line-model.zip?dl=1): Can process multiple words in one image.
-2. Extract the downloaded zip file into the `model` directory of the repository.
-3. Navigate to the `src` directory.
-4. Run the inference code:
-   - `python main.py`: Recognizes text from a word image.
-   - `python main.py --img_file ../data/line.png`: Recognizes text from a text line image.
+2. **Model for Text Recognition**:
+   - The pre-trained model `microsoft/trocr-base-handwritten` is used.
+   - **Loading the Model in Kaggle**:
+     ```python
+     # Load the pre-trained model and processor
+     model = VisionEncoderDecoderModel.from_pretrained("microsoft/trocr-base-handwritten")
+     processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
+     ```
+   - The `VisionEncoderDecoderModel` combines a vision-based encoder with a text-based decoder, trained specifically for handwritten text recognition.
+   - **How It Works**:
+     - The processor converts input images into pixel values and tokenizes the textual output.
+     - The encoder processes image embeddings, and the decoder generates text sequences.
+     - This design enables highly accurate transcription of handwritten text in a wide variety of scenarios.
 
-**Example Outputs**:
+3. **Frontend with React.js**:
+   - The local React.js frontend provides a user interface for uploading handwritten text images.
+   - It sends requests to the Flask API, processes responses, and displays the transcribed text.
 
-For a word image:
-![word](./data/word.png)
+4. **Workflow**:
+   - Users upload handwritten images via the React.js frontend.
+   - The images are sent to the Flask API endpoint exposed by `ngrok`.
+   - The Kaggle environment processes the image using the pre-trained TrOCR model.
+   - The transcription results are returned to the frontend for display.
+
+#### Tools Used
+- **Kaggle**: For hosting and running the backend server.
+- **Flask**: As the backend framework for the API.
+- **ngrok**: To expose the Flask API to a public URL.
+- **React.js**: For the user interface.
+- **Pre-trained Model**: `microsoft/trocr-base-handwritten`.
+
+#### Advantages of This Approach
+- **Pre-trained Models**: Leveraging state-of-the-art models reduces the need for extensive training.
+- **API Integration**: Seamless communication between the backend and frontend for real-time results.
+- **Scalable Design**: Can be extended to support additional features like multilingual recognition or custom datasets.
+
+#### Expected Outcome
+- Quick and accurate recognition of handwritten text.
+- Easy-to-use interface for users to interact with the system.
+- Flexible architecture for deployment in various scenarios.
