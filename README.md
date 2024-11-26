@@ -8,12 +8,12 @@ Handwritten Text Recognition (HTR) system implemented with TensorFlow (TF) and t
 
 This project has evolved through three approaches:
 
-### Old Model
+### First Approach : Old Model
 - **Architecture**: Stripped-down version with 5 CNN layers, 2 RNN (LSTM) layers, and a CTC loss/decoding layer.
 - **Performance**: Moderate accuracy; performs well on single-word recognition but struggles with text lines.
 - **Focus**: Suitable for recognizing isolated word images.
 
-### New Model
+### Two Approach : New Model
 - **Architecture**: Enhanced CNN and RNN configurations, improved training data augmentation techniques, and optimized learning rate.
 - **Performance**: Better text line recognition; increased robustness with slightly lower character error rates.
 - **Focus**: More generalized performance for both single words and text lines.
