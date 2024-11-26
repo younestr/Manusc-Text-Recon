@@ -1,0 +1,122 @@
+/* Global Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f6f8;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Main Container */
+  .App {
+    width: 100%;
+    max-width: 600px;
+    background-color: #fff;
+    padding: 30px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    text-align: center;
+    border-top: 5px solid #5a8f7d; /* A nice top accent line */
+    transition: transform 0.3s ease;
+  }
+  
+  /* Hover effect on the main container */
+  .App:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Heading */
+  h1 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 700;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    color: #4e7a63;
+  }
+  
+  /* File Input Styling */
+  input[type="file"] {
+    width: 100%;
+    padding: 15px;
+    margin: 20px 0;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    background-color: #f1f1f1;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+  
+  /* Hover effect on input */
+  input[type="file"]:hover {
+    border-color: #5a8f7d;
+    background-color: #e7f2e7;
+  }
+  
+  /* Submit Button Styling */
+  button {
+    background-color: #5a8f7d;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 15px;
+  }
+  
+  /* Hover effect on the button */
+  button:hover {
+    background-color: #4e7a63;
+    transform: translateY(-2px);
+  }
+  
+  /* Transcription Display */
+  div {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #eaf2f1;
+    border-radius: 10px;
+    box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.1);
+    border-left: 5px solid #5a8f7d; /* Accent border for the transcription */
+    text-align: left;
+  }
+  
+  /* Transcription Heading */
+  h2 {
+    font-size: 24px;
+    color: #4e7a63;
+    font-weight: 700;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+  }
+  
+  /* Transcription Text */
+  p {
+    font-size: 18px;
+    color: #555;
+    line-height: 1.7;
+    word-wrap: break-word;
+    margin: 0;
+    font-weight: 400;
+  }
+  
+  /* Animation for page load */
+  .App {
+    opacity: 0;
+    animation: fadeIn 1s ease-in-out forwards;
+  }
+  
+  /* Fade-in animation */
+  @keyframes fadeIn {
+    100% {
+      opacity: 1;
+    }
+  }
+  
