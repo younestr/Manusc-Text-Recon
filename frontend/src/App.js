@@ -24,7 +24,7 @@ function App() {
 
     try {
       const response = await axios.post(
-        'https://bfb6-34-87-196-141.ngrok-free.app/transcribe',
+        'https://da1c-35-204-140-236.ngrok-free.app/transcribe', // Updated URL
         formData,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );
