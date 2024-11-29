@@ -33,7 +33,7 @@ function App() {
 
     try {
       const response = await axios.post(
-        'https://da1c-35-204-140-236.ngrok-free.app/transcribe', // Updated URL
+        'https://9e50-104-199-239-210.ngrok-free.app/transcribe', // Updated URL
         formData,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );
